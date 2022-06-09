@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"com.sam.demolibsp.demosplib","l":"DemosplibApplication"},{"p":"com.sam.demolibsp.demosplib","l":"Handler"},{"p":"com.sam.demolibsp.demosplib","l":"SpringBootBrakeDemo"}]
