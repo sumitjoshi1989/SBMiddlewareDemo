@@ -1,4 +1,4 @@
-buildscript {
+ buildscript {
   repositories {
     mavenCentral()
   }
@@ -6,20 +6,12 @@ buildscript {
     classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
   }
 }
-
-plugins {
-    id 'com.jfrog.bintray' version '1.8.5'
-}
-
-// apply plugin: 'maven'
-// apply plugin: 'java-library'
  
-
  plugins {
      id 'java'
      id 'java-library'
      id 'maven-publish'  
- //    id 'io.codearte.nexus-staging'
+     id 'signing'
  }
 
  apply plugin: 'io.codearte.nexus-staging'
@@ -31,11 +23,14 @@ if (project.hasProperty('signing.keyId')) {
   }
 }
 
+group = 'com.sam.demolibsp'
+version = '0.0.3-SNAPSHOT'
+description = 'demosplib'
+//java.sourceCompatibility = JavaVersion.VERSION_11
+//targetCompatibility = JavaVersion.VERSION_11
+
 repositories {
-    mavenLocal()
-    maven {
-        url = uri('https://repo.maven.apache.org/maven2/')
-    }
+  mavenCentral()
 }
 
 dependencies {
@@ -44,12 +39,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.0'
 }
 
-group = 'com.sam.demolibsp'
-version = '0.0.3-SNAPSHOT'
-description = 'demosplib'
-java.sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
-
+java{
+    withJavadocJar()
+    withSourcesJar()
+}
 
 test {
     testLogging {
@@ -62,168 +55,65 @@ test {
     }
 }
 
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    configurations = ['archives']
-    publish = true
-    override = true
-    pkg {
-        repo = 'maven'
-        name = project.name
-        userOrg = 'airbrake'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/sumitjoshi1989/SBMiddlewareDemo.git'
-        version {
-            name = project.version
-            desc = 'spring boot integration for javabrake'
-            vcsTag = project.version
-        }
-    }
-}
 
 publishing {
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
-             groupId    project.group
-            artifactId  project.name
-            version    project.version
-    
-     }
-   }
-}
+    publications{
+       
+        mavenJava(MavenPublication){
 
+            group = 'com.sam.demolibsp'
+            artifactId = 'demosplib'
+            version = '0.0.3-SNAPSHOT'
+            from(components.java) 
+            pom{
+                name = 'demosplib'
+                url = 'https://github.com/sumitjoshi1989/SBMiddlewareDemo'
 
-
-// if (project.hasProperty('ossrhUsername')) {
-//   uploadArchives {
-//     repositories {
-//       mavenDeployer {
-//        // beforeDeployment {MavenDeployment deployment -> signing.signPom(deployment) }
-
-//         repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
-//           authentication(userName: ossrhUsername, password: ossrhPassword)
-//         }
-
-//         snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
-//           authentication(userName: ossrhUsername, password: ossrhPassword)
-//         }
-
-//         pom.project {
-//           name 'demosplib'
-//           packaging 'jar'
-//           description 'demosplib for Airbrake'
-//           url 'https://airbrake.io'
-
-//           scm {
-//             connection 'https://github.com/sumitjoshi1989/SBMiddlewareDemo.git'
-//             developerConnection 'https://github.com/sumitjoshi1989/SBMiddlewareDemo.git'
-//             url 'https://github.com/sumitjoshi1989/SBMiddlewareDemo'
-//           }
-
-//           licenses {
-//             license {
-//               name 'MIT License'
-//               url 'https://opensource.org/licenses/MIT'
-//             }
-//           }
-
-//           developers {
-//             developer {
-//               id 'sumit'
-//               name 'Sumit Joshi'
-//               email 'joshisumitsunil@gmail.com'
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-task createPom {
-    doLast {
-        pom {
-            project {
-                groupId project.group
-                artifactId project.name
-                version project.version
-
-                inceptionYear '2022'
-                licenses {
-                    license {
-                        name 'MIT License'
-                        url 'http://www.opensource.org/licenses/mit-license.php'
-                        distribution 'repo'
+            licenses {
+                license {
+                     name = 'MIT License'
+                     url = 'https://opensource.org/licenses/MIT'
                     }
                 }
+            developers {
+                developer {
+                    id = 'sumitjoshi1989'
+                    name = 'Sumit Joshi'
+                    email = 'joshisumitsunil@gmail.com'
+                    }
+                }
+            scm {
+                connection = 'scm:git:git:github.com/sumitjoshi1989/SBMiddlewareDemo.git'
+                developerConnection = 'scm:git:ssh://github.com/sumitjoshi1989/SBMiddlewareDemo.git'
+                url = 'https://github.com/sumitjoshi1989/SBMiddlewareDemo'
+             }
             }
-        }.writeTo("pom.xml")
+        }
+    }
+    repositories{
+        maven{
+            name = 'OSSRH'
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            credentials {
+                username = "CKzrKMny"
+                password = "NtLEMOuUoy6tVjKfVEWKlX6KH3NP+SecO1oxgRE8eE1+"
+
+            }
+        }
+        
+
     }
 }
 
+signing {
+    sign publishing.publications.mavenJava
+}
 
-
-
-/*
- * This file was generated by the Gradle 'init' task.
- *
- * This project uses @Incubating APIs which are subject to change.
- */
-
-// plugins {
-//     id 'java'
-//     id 'maven-publish'
-// }
-
-// repositories {
-//     mavenLocal()
-//     maven {
-//         url = uri('https://repo.maven.apache.org/maven2/')
-//     }
-// }
-
-// dependencies {
-//     implementation 'org.springframework.boot:spring-boot-starter-web:2.7.0'
-//     implementation 'io.airbrake:javabrake:0.2.4'
-//     testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.0'
-// }
-
-// group = 'com.sam.demolibsp'
-// version = '0.0.1-SNAPSHOT'
-// description = 'demosplib'
-// java.sourceCompatibility = JavaVersion.VERSION_1_8
-
-// publishing {
-//     publications {
-//         maven(MavenPublication) {
-//             from(components.java)
-//         }
-//     }
-// }
-
-// tasks.withType(JavaCompile) {
-//     options.encoding = 'UTF-8'
-// }
-/*
- * This file was generated by the Gradle 'init' task.
- *
- * This project uses @Incubating APIs which are subject to change.
- */
+javadoc{
+    
+if (!JavaVersion.current().isJava9Compatible()) {
+    DeprecationLogger.nagUserWith(JAVA7_DEPRECATION_WARNING_DOC);
+    options.addBooleanOption('html5', true)
+}
+}
 
